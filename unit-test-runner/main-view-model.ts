@@ -233,12 +233,12 @@ export class TestBrokerViewModel extends observable.Observable {
 
     public runTests(testScripts) {
         testScripts.forEach((script, i) => {
-
             if (script.localPath) {
                 console.log('require script ' + script.url + ' from ' + script.localPath);
                 require(script.localPath);
             } else {
                 console.log('eval script ' + script.url);
+                this.loadShim(script.url);
                 //call eval indirectly to execute the scripts in the global scope
                 var geval = eval;
                 geval(script.contents);
@@ -312,6 +312,23 @@ export class TestBrokerViewModel extends observable.Observable {
     public socketEmit(...args: any[]) {
         if (this.karmaRequestedRun) {
             this.socket.emit.apply(this.socket, arguments);
+        }
+    }
+
+    private loadShim(url: string) {
+        if (url.indexOf('mocha') !== -1) {
+            if (!global.window) {
+                global.window = global;
+            }
+            if (!global.location) {
+                global.location = {};
+            }
+            if (!global.location.href) {
+                global.location.href = '/';
+            }
+            if (!global.document.getElementById) {
+                global.document.getElementById = id => null;
+            }
         }
     }
 }
