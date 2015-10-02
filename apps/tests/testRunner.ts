@@ -18,7 +18,8 @@ export function isRunningOnEmulator(): boolean {
             android.os.Build.PRODUCT.toLocaleLowerCase().indexOf("emulator") > -1; // VS Emulator
     }
     else if (platform.device.os === platform.platformNames.ios) {
-        return platform.device.model === "iPhone Simulator";
+        //return platform.device.model === "iPhone Simulator";
+        return (__dirname.search("Simulator") > -1);
     }
 }
 
